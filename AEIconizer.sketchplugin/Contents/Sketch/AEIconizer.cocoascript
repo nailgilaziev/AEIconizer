@@ -9,28 +9,25 @@ var wirelessInstallSizes = [NSArray arrayWithObjects: 57, nil];
 var iconSizes = [NSArray arrayWithObjects: iTunesSizes, iOSSizes, watchOSSizes, wirelessInstallSizes, nil];
 
 // iOS icon names
-var artboardNames = [NSArray arrayWithObjects:
-    "appicon24", "appicon24@2x", "appicon24@3x", 
-    "appicon27.5", "appicon27.5@2x", "appicon27.5@3x", 
+var artboardNames = [NSArray arrayWithObjects:    
     "appicon29", "appicon29@2x", "appicon29@3x", 
     "appicon40", "appicon40@2x", "appicon40@3x",
-    "appicon50", "appicon50@2x", "appicon50@3x",  
-	"appicon57", "appicon57@2x", "appicon57@3x",    
-    "appicon60", "appicon60@2x", "appicon60@3x", 
-    "appicon72", "appicon72@2x", "appicon72@3x", 
-    "appicon76", "appicon76@2x", "appicon76@3x", 
-    "appicon83.5", "appicon83.5@2x", "appicon83.5@3x", 
-    "appicon86", "appicon86@2x", "appicon86@3x", 
-    "appicon98", "appicon98@2x", "appicon98@3x", 
+    "appicon50", "appicon50@2x",   
+    "appicon57", "appicon57@2x",     
+                 "appicon60@2x", "appicon60@3x", 
+    "appicon72", "appicon72@2x", 
+    "appicon76", "appicon76@2x", 
+                 "appicon83.5@2x",     
     "appicon512", "appicon512@2x", nil];
 
-function onRun(context) {
+function onRun(context) {   
+    log('artboardNames '+ artboardNames);
     var doc = context.document;
     if (originalIcon = handleSelection(context)) {
         if ([[originalIcon frame] width] == [[originalIcon frame] height]) {
             [originalIcon setName: "appiconOriginal"];
             removeExistingIcons(context);
-            iconize(originalIcon);
+            iconize(originalIcon,context);
             [[doc currentView] centerLayersInCanvas];
         } else {
             [doc showMessage:"Oops, icon artboard must have same width and height"];
@@ -65,6 +62,7 @@ function handleSelection(context) {
     return iconArtboard
 }
 
+
 function removeExistingIcons(context) {
     var doc = context.document;
     var artboards = [[doc currentPage] artboards];
@@ -77,7 +75,7 @@ function removeExistingIcons(context) {
     }
 }
 
-function iconize(originalIcon) {
+function iconize(originalIcon,context) {
     var originalSize = [[originalIcon frame] width];
     var originalX = [[originalIcon absoluteRect] rulerX];
     var originalY = [[originalIcon absoluteRect] rulerY];
@@ -87,61 +85,55 @@ function iconize(originalIcon) {
     var startY = originalY + originalSize + spacing;
 
     var allSizes = [iconSizes objectEnumerator];
+    log('iconize called')
     while (sizeArray = [allSizes nextObject]) {
-        startX = createIconsWithSizes(sizeArray, originalIcon, startX, startY, spacing);
+        log('startX ' + startX + ' for sizeArray ' + sizeArray);
+        startX = createIconsWithSizes(sizeArray, originalIcon, startX, startY, spacing,context);
     }
 }
 
-function createIconsWithSizes(sizeArray, originalIcon, fromX, fromY, spacing) {
-    iconsRowHeight = 0;
-		maxX = 0
+function createIconsWithSizes(sizeArray, originalIcon, fromX, fromY, spacing,context) {
 
-    var sizes = [sizeArray objectEnumerator];
-    while (newSize = [sizes nextObject]) {
-        var iconName = "appicon" + newSize;
+    // This function creates a block of artboards
+    // while creating artboards with icons he expands the area of block 
+    // currently occupied area
+    occupiedHeight = 0; 
+    occupiedWidth = 0;
 
-        newX = fromX
-        newY = fromY + iconsRowHeight;
+    var sizes = [sizeArray objectEnumerator]; //for example watchOSSizes = 98, 86, 27.5, 24
+    while (iconSize = [sizes nextObject]) {        
 
-        if (newSize >= 512) {
-            // iTunesArtwork-512@2x
-            var artwork2x = scaleIcon(originalIcon, (newSize * 2), iconName + "@2x");
-            [[artwork2x absoluteRect] setRulerX:newX];
-            [[artwork2x absoluteRect] setRulerY:newY];
-
-            // iTunesArtwork-512
-            var artwork1x = scaleIcon(originalIcon, newSize, iconName);
-            [[artwork1x absoluteRect] setRulerX:newX + (newSize * 2) + spacing];
-            [[artwork1x absoluteRect] setRulerY:newY];
-			
-			maxX = [[artwork1x absoluteRect] x] + [[artwork1x absoluteRect] width]			
-        } else {
-            // appiconSize@3x
-            var icon3x = scaleIcon(originalIcon, newSize * 3, iconName + "@3x");
-            [[icon3x absoluteRect] setRulerX:newX];
-            [[icon3x absoluteRect] setRulerY:newY];
-
-            // appiconSize@2x
-            var icon2x = scaleIcon(originalIcon, newSize * 2, iconName + "@2x");
-            [[icon2x absoluteRect] setRulerX:newX + (newSize * 3) + spacing];
-            [[icon2x absoluteRect] setRulerY:newY];
-
-            // appiconSize
-            var icon1x = scaleIcon(originalIcon, newSize, iconName);
-            [[icon1x absoluteRect] setRulerX:newX + (newSize * 3) + (newSize * 2) + (2 * spacing)];
-            [[icon1x absoluteRect] setRulerY:newY];
-
-			maxXRect = [[icon1x absoluteRect] x] + [[icon1x absoluteRect] width]
-			if ( maxXRect > maxX) {
-				maxX = maxXRect
-			}			
-
-            // create new row
-            iconsRowHeight += (newSize * 3) + spacing;
+        //each size may have line of 1x ,2x and 3x artboards
+        var iconX = fromX; //begin from start and next expand this value
+        var iconY = fromY + occupiedHeight;
+        
+        for (var i = 3; i >= 1; i--) {
+            var iconName = "appicon" + iconSize;
+            if(i != 1) {
+                iconName += "@" + i + "x";
+            }            
+            log('artboard contains ' + iconName + '? ' + [artboardNames containsObject: iconName]);
+            if([artboardNames containsObject: iconName]) {
+                var newArt = scaleIcon(originalIcon, iconSize * i, iconName);
+                [[newArt absoluteRect] setRulerX:iconX];
+                [[newArt absoluteRect] setRulerY:iconY];
+                iconX += iconSize * i + spacing;
+            }  
         }
+
+        //if we expand occupied area width need to extend this area
+        var lineOccupiedWidth = iconX - fromX;
+        if(lineOccupiedWidth > occupiedWidth) {
+            occupiedWidth = lineOccupiedWidth;
+        }
+
+        // expand area by default on maximum possible size. 
+        occupiedHeight += (iconSize * 3) + spacing;
     }
-	
-	return maxX + (3 * spacing)
+
+    log('occupied area is w*h ' + occupiedWidth + ' * ' + occupiedHeight);
+
+    return fromX + occupiedWidth + (3 * spacing);
 }
 
 function scaleIcon(originalIcon, newSize, newName) {
@@ -156,3 +148,5 @@ function scaleIcon(originalIcon, newSize, newName) {
 
     return newIcon;
 }
+
+onRun(context);
