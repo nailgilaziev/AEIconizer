@@ -3,30 +3,32 @@
 
 // iOS icon sizes
 var iTunesSizes = [NSArray arrayWithObjects: 512, nil];
-var iOSSizes = [NSArray arrayWithObjects: 83.5, 76, 60, 40, 29, nil];
+var iOSSizes = [NSArray arrayWithObjects: 83.5, 76, 72, 50, 60, 40, 29, nil];
 var watchOSSizes = [NSArray arrayWithObjects: 98, 86, 27.5, 24, nil];
 var wirelessInstallSizes = [NSArray arrayWithObjects: 57, nil];
 var iconSizes = [NSArray arrayWithObjects: iTunesSizes, iOSSizes, watchOSSizes, wirelessInstallSizes, nil];
 
 // iOS icon names
 var artboardNames = [NSArray arrayWithObjects:
-    "Icon-24", "Icon-24@2x", "Icon-24@3x", 
-    "Icon-27.5", "Icon-27.5@2x", "Icon-27.5@3x", 
-    "Icon-29", "Icon-29@2x", "Icon-29@3x", 
-    "Icon-40", "Icon-40@2x", "Icon-40@3x", 
-	"Icon-57", "Icon-57@2x", "Icon-57@3x",
-    "Icon-60", "Icon-60@2x", "Icon-60@3x", 
-    "Icon-76", "Icon-76@2x", "Icon-76@3x", 
-    "Icon-83.5", "Icon-83.5@2x", "Icon-83.5@3x", 
-    "Icon-86", "Icon-86@2x", "Icon-86@3x", 
-    "Icon-98", "Icon-98@2x", "Icon-98@3x", 
-    "Icon-512", "Icon-512@2x", nil];
+    "appicon24", "appicon24@2x", "appicon24@3x", 
+    "appicon27.5", "appicon27.5@2x", "appicon27.5@3x", 
+    "appicon29", "appicon29@2x", "appicon29@3x", 
+    "appicon40", "appicon40@2x", "appicon40@3x",
+    "appicon50", "appicon50@2x", "appicon50@3x",  
+	"appicon57", "appicon57@2x", "appicon57@3x",    
+    "appicon60", "appicon60@2x", "appicon60@3x", 
+    "appicon72", "appicon72@2x", "appicon72@3x", 
+    "appicon76", "appicon76@2x", "appicon76@3x", 
+    "appicon83.5", "appicon83.5@2x", "appicon83.5@3x", 
+    "appicon86", "appicon86@2x", "appicon86@3x", 
+    "appicon98", "appicon98@2x", "appicon98@3x", 
+    "appicon512", "appicon512@2x", nil];
 
 function onRun(context) {
     var doc = context.document;
     if (originalIcon = handleSelection(context)) {
         if ([[originalIcon frame] width] == [[originalIcon frame] height]) {
-            [originalIcon setName: "Icon-Original"];
+            [originalIcon setName: "appiconOriginal"];
             removeExistingIcons(context);
             iconize(originalIcon);
             [[doc currentView] centerLayersInCanvas];
@@ -96,7 +98,7 @@ function createIconsWithSizes(sizeArray, originalIcon, fromX, fromY, spacing) {
 
     var sizes = [sizeArray objectEnumerator];
     while (newSize = [sizes nextObject]) {
-        var iconName = "Icon-" + newSize;
+        var iconName = "appicon" + newSize;
 
         newX = fromX
         newY = fromY + iconsRowHeight;
@@ -114,17 +116,17 @@ function createIconsWithSizes(sizeArray, originalIcon, fromX, fromY, spacing) {
 			
 			maxX = [[artwork1x absoluteRect] x] + [[artwork1x absoluteRect] width]			
         } else {
-            // Icon-Size@3x
+            // appiconSize@3x
             var icon3x = scaleIcon(originalIcon, newSize * 3, iconName + "@3x");
             [[icon3x absoluteRect] setRulerX:newX];
             [[icon3x absoluteRect] setRulerY:newY];
 
-            // Icon-Size@2x
+            // appiconSize@2x
             var icon2x = scaleIcon(originalIcon, newSize * 2, iconName + "@2x");
             [[icon2x absoluteRect] setRulerX:newX + (newSize * 3) + spacing];
             [[icon2x absoluteRect] setRulerY:newY];
 
-            // Icon-Size
+            // appiconSize
             var icon1x = scaleIcon(originalIcon, newSize, iconName);
             [[icon1x absoluteRect] setRulerX:newX + (newSize * 3) + (newSize * 2) + (2 * spacing)];
             [[icon1x absoluteRect] setRulerY:newY];

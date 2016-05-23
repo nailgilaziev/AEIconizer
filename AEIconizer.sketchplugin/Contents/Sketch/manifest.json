@@ -1,21 +1,21 @@
 {
-  "author": "tadija",
+  "author": "nailgilaziev",
   "commands": [
     {
       "script": "AEIconizer.cocoascript",
-      "shortcut": "ctrl shift i",
-      "name": "AEIconizer",
-      "identifier": "AEIconizer"
+      "shortcut": "ctrl shift a",
+      "name": "iOSAppIconMultiplier",
+      "identifier": "iOSAppIconMultiplier"
     }
   ],
   "menu": {
     "items": [
-      "AEIconizer"
+      "iOSAppIconMultiplier"
     ]
   },
-  "identifier": "net.tadija.sketch.AEIconizer",
-  "version": "2.2.0",
+  "identifier": "ru.nailgilaziev.iOSAppIconMultiplier",
+  "version": "1.0",
   "description": "Makes your life easy when you need to resize artwork for iOS app icon.",
-  "authorEmail": "tadija@me.com",
-  "name": "AEIconizer"
+  "authorEmail": "nail.gilaziev@gmail.com",
+  "name": "iOSAppIconMultiplier"
 }
