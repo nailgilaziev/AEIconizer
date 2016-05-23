@@ -21,13 +21,12 @@ var artboardNames = [NSArray arrayWithObjects:
     "appicon512", "appicon512@2x", nil];
 
 function onRun(context) {   
-    log('artboardNames '+ artboardNames);
     var doc = context.document;
     if (originalIcon = handleSelection(context)) {
         if ([[originalIcon frame] width] == [[originalIcon frame] height]) {
             [originalIcon setName: "appiconOriginal"];
             removeExistingIcons(context);
-            iconize(originalIcon,context);
+            iconize(originalIcon);
             [[doc currentView] centerLayersInCanvas];
         } else {
             [doc showMessage:"Oops, icon artboard must have same width and height"];
@@ -75,7 +74,7 @@ function removeExistingIcons(context) {
     }
 }
 
-function iconize(originalIcon,context) {
+function iconize(originalIcon) {
     var originalSize = [[originalIcon frame] width];
     var originalX = [[originalIcon absoluteRect] rulerX];
     var originalY = [[originalIcon absoluteRect] rulerY];
@@ -88,7 +87,7 @@ function iconize(originalIcon,context) {
     log('iconize called')
     while (sizeArray = [allSizes nextObject]) {
         log('startX ' + startX + ' for sizeArray ' + sizeArray);
-        startX = createIconsWithSizes(sizeArray, originalIcon, startX, startY, spacing,context);
+        startX = createIconsWithSizes(sizeArray, originalIcon, startX, startY, spacing);
     }
 }
 
@@ -130,7 +129,6 @@ function createIconsWithSizes(sizeArray, originalIcon, fromX, fromY, spacing,con
         // expand area by default on maximum possible size. 
         occupiedHeight += (iconSize * 3) + spacing;
     }
-
     log('occupied area is w*h ' + occupiedWidth + ' * ' + occupiedHeight);
 
     return fromX + occupiedWidth + (3 * spacing);
@@ -148,5 +146,3 @@ function scaleIcon(originalIcon, newSize, newName) {
 
     return newIcon;
 }
-
-onRun(context);
