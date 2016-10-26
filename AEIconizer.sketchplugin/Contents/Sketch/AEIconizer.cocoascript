@@ -3,22 +3,23 @@
 
 // iOS icon sizes
 var iTunesSizes = [NSArray arrayWithObjects: 512, nil];
-var iOSSizes = [NSArray arrayWithObjects: 83.5, 76, 72, 50, 60, 40, 29, nil];
+var iOSSizes = [NSArray arrayWithObjects: 83.5, 76, 72, 50, 60, 40, 29, 20, nil];
 var watchOSSizes = [NSArray arrayWithObjects: 98, 86, 27.5, 24, nil];
 var wirelessInstallSizes = [NSArray arrayWithObjects: 57, nil];
 var iconSizes = [NSArray arrayWithObjects: iTunesSizes, iOSSizes, watchOSSizes, wirelessInstallSizes, nil];
 
 // iOS icon names
 var artboardNames = [NSArray arrayWithObjects:    
-    "appicon29", "appicon29@2x", "appicon29@3x", 
-    "appicon40", "appicon40@2x", "appicon40@3x",
-    "appicon50", "appicon50@2x",   
-    "appicon57", "appicon57@2x",     
-                 "appicon60@2x", "appicon60@3x", 
-    "appicon72", "appicon72@2x", 
-    "appicon76", "appicon76@2x", 
-                 "appicon83.5@2x",     
-    "appicon512", "appicon512@2x", nil];
+    /*20*/   "appicon20", "appicon40", "appicon60", 
+    /*29*/   "appicon29", "appicon58", "appicon87", 
+    /*40*/   /*exist*/    "appicon80", "appicon120",
+    /*50*/   "appicon50", "appicon100",/*not used*/
+    /*57*/   "appicon57", "appicon114",/*not used*/    
+    /*60*/   /*exist*/    /*exist*/    "appicon180", 
+    /*72*/   "appicon72", "appicon144",/*not used*/ 
+    /*76*/   "appicon76", "appicon152",/*not used*/ 
+    /*83.5*/ /*not used*/ "appicon167",/*not used*/     
+    /*512*/  /*not used*/ "appicon1024", nil];
 
 function onRun(context) {   
     var doc = context.document;
@@ -107,10 +108,8 @@ function createIconsWithSizes(sizeArray, originalIcon, fromX, fromY, spacing,con
         var iconY = fromY + occupiedHeight;
         
         for (var i = 3; i >= 1; i--) {
-            var iconName = "appicon" + iconSize;
-            if(i != 1) {
-                iconName += "@" + i + "x";
-            }            
+            var iconName = "appicon" + iconSize*i;
+                        
             log('artboard contains ' + iconName + '? ' + [artboardNames containsObject: iconName]);
             if([artboardNames containsObject: iconName]) {
                 var newArt = scaleIcon(originalIcon, iconSize * i, iconName);
