@@ -2,15 +2,15 @@
 // Source: github.com/tadija/AEIconizer
 
 // iOS icon sizes
-var iTunesSizes = NSArray.arrayWithObjects([512]);
-var iOSSizes = NSArray.arrayWithObjects([83.5, 76, 72, 50, 60, 40, 29, 20]);
-var watchOSSizes = NSArray.arrayWithObjects([98, 86, 27.5, 24]);
-var wirelessInstallSizes = NSArray.arrayWithObjects([57]);
-var iconSizes = NSArray.arrayWithObjects([iTunesSizes, iOSSizes, watchOSSizes, wirelessInstallSizes]);
+var iTunesSizes = NSArray.arrayWithArray([512]);
+var iOSSizes = NSArray.arrayWithArray([83.5, 76, 72, 50, 60, 40, 29, 20]);
+var watchOSSizes = NSArray.arrayWithArray([98, 86, 27.5, 24]);
+var wirelessInstallSizes = NSArray.arrayWithArray([57]);
+var iconSizes = NSArray.arrayWithArray([iTunesSizes, iOSSizes, watchOSSizes, wirelessInstallSizes]);
 
 
 // iOS icon names
-var artboardNames = [NSArray arrayWithObjects:
+var artboardNames = NSArray.arrayWithArray([
     /*20*/   "appicon20", "appicon40", "appicon60",
     /*29*/   "appicon29", "appicon58", "appicon87",
     /*40*/   /*exist*/    "appicon80", "appicon120",
@@ -20,9 +20,10 @@ var artboardNames = [NSArray arrayWithObjects:
     /*72*/   "appicon72", "appicon144",/*not used*/
     /*76*/   "appicon76", "appicon152",/*not used*/
     /*83.5*/ /*not used*/ "appicon167",/*not used*/
-    /*512*/  /*not used*/ "appicon1024", nil];
+    /*512*/  /*not used*/ "appicon1024"]);
 
 function onRun(context) {
+    log('script started');
     var doc = context.document;
     if (originalIcon = handleSelection(context)) {
         if ([[originalIcon frame] width] == [[originalIcon frame] height]) {
@@ -49,14 +50,21 @@ function handleSelection(context) {
     } else {
         var currentSelection = selection[0];
         if (currentSelection.className() == "MSArtboardGroup") {
+            log('selection MSArtboardGroup');
             iconArtboard = currentSelection;
         } else {
+            log('not a selection MSArtboardGroup');
             iconArtboard = [currentSelection parentArtboard];
             if (!iconArtboard) {
                 [doc showMessage:"Oops, selection has to be inside artboard"];
             }
         }
-        currentSelection.setIsSelected(false);
+        //try{
+          //currentSelection.deselect();
+          //context.selection.firstObject().deselect();
+        //}catch(err){
+          //doc.showMessage('catched exception');
+        //}
     }
 
     return iconArtboard
@@ -85,7 +93,7 @@ function iconize(originalIcon) {
     var startY = originalY + originalSize + spacing;
 
     var allSizes = [iconSizes objectEnumerator];
-    log('iconize called')
+    log('iconize called');
     while (sizeArray = [allSizes nextObject]) {
         log('startX ' + startX + ' for sizeArray ' + sizeArray);
         startX = createIconsWithSizes(sizeArray, originalIcon, startX, startY, spacing);
@@ -133,6 +141,9 @@ function createIconsWithSizes(sizeArray, originalIcon, fromX, fromY, spacing,con
     return fromX + occupiedWidth + (3 * spacing);
 }
 
+
+var origalIconSelected = true;
+
 function scaleIcon(originalIcon, newSize, newName) {
     var newIcon = [originalIcon duplicate];
 
@@ -141,7 +152,10 @@ function scaleIcon(originalIcon, newSize, newName) {
     [newIcon multiplyBy:ratio];
 
     [newIcon setName: newName];
-    [newIcon select:true byExpandingSelection:true];
 
+    [newIcon select:true byExpandingSelection:!origalIconSelected];
+    if(origalIconSelected == true){
+      origalIconSelected = false;
+    }
     return newIcon;
 }

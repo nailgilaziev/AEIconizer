@@ -4,13 +4,20 @@
     {
       "script": "AEIconizer.cocoascript",
       "shortcut": "ctrl shift m",
-      "name": "iOSAppIconMultiplier",
-      "identifier": "iOSAppIconMultiplier"
+      "name": "step1 multiply icon",
+      "identifier": "step1 multiply icon"
+    },
+    {
+      "script": "export2xcode.cocoascript",
+      "shortcut": "ctrl shift e",
+      "name": "step2 export to xcode",
+      "identifier": "step2 export to xcode"
     }
   ],
   "menu": {
     "items": [
-      "iOSAppIconMultiplier"
+      "step1 multiply icon",
+      "step2 export to xcode"
     ]
   },
   "identifier": "ru.nailgilaziev.iOSAppIconMultiplier",
